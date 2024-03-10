@@ -10,22 +10,15 @@ import android.view.animation.OvershootInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.ui.Modifier
 import androidx.core.animation.doOnEnd
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.example.fcppushnotificationshttpv1.chat.screen.ChatScreen
-import com.example.fcppushnotificationshttpv1.chat.viewmodel.ChatViewModel
-import com.example.fcppushnotificationshttpv1.enter_token.EnterTokenDialog
+import androidx.core.splashscreen.SplashScreenViewProvider
+import com.example.fcppushnotificationshttpv1.notification_chat.screen.NotificationChatScreen
 import com.example.fcppushnotificationshttpv1.ui.theme.FCPPushNotificationsHTTPV1Theme
 
 class MainActivity : ComponentActivity() {
-
-    private val chatViewModel by viewModels<ChatViewModel>()
     private val mainViewModel by viewModels<MainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,63 +27,42 @@ class MainActivity : ComponentActivity() {
             setKeepOnScreenCondition {
                 !mainViewModel.isReady.value
             }
-            setOnExitAnimationListener { screen ->
-                val zoomX = ObjectAnimator.ofFloat(
-                    screen.iconView,
-                    View.SCALE_X,
-                    0.4f,
-                    0.0f
-                ).apply {
-                    interpolator = OvershootInterpolator()
-                    duration = 500L
-                    doOnEnd { screen.remove() }
-                }
-
-                val zoomY = ObjectAnimator.ofFloat(
-                    screen.iconView,
-                    View.SCALE_Y,
-                    0.4f,
-                    0.0f
-                ).apply {
-                    interpolator  = OvershootInterpolator()
-                    duration = 500L
-                    doOnEnd { screen.remove() }
-                }
-
-                zoomX.start()
-                zoomY.start()
-            }
+            setOnExitAnimationListener(::onExitAnimationListener)
         }
 
         requestNotificationPermission()
         setContent {
             FCPPushNotificationsHTTPV1Theme {
-                Surface(
-                    color = MaterialTheme.colorScheme.background,
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    val state = chatViewModel.state
-                    if (state.isEnteringToken) {
-                        EnterTokenDialog(
-                            token = state.remoteToken,
-                            onTokenChange = chatViewModel::onRemoteTokenChange,
-                            onSubmit = chatViewModel::onSubmitRemoteToken
-                        )
-                    } else {
-                        ChatScreen(
-                            messageText = state.messageText,
-                            onMessageSend = {
-                                chatViewModel.sendMessage(isBroadcast = false)
-                            },
-                            onMessageBroadcast = {
-                                chatViewModel.sendMessage(isBroadcast = true)
-                            },
-                            onMessageChange = chatViewModel::onMessageChange
-                        )
-                    }
-                }
+                NotificationChatScreen()
             }
         }
+    }
+
+    private fun onExitAnimationListener(screen: SplashScreenViewProvider) {
+        val zoomX = ObjectAnimator.ofFloat(
+            screen.iconView,
+            View.SCALE_X,
+            0.4f,
+            0.0f
+        ).apply {
+            interpolator = OvershootInterpolator()
+            duration = 500L
+            doOnEnd { screen.remove() }
+        }
+
+        val zoomY = ObjectAnimator.ofFloat(
+            screen.iconView,
+            View.SCALE_Y,
+            0.4f,
+            0.0f
+        ).apply {
+            interpolator = OvershootInterpolator()
+            duration = 500L
+            doOnEnd { screen.remove() }
+        }
+
+        zoomX.start()
+        zoomY.start()
     }
 
     private fun requestNotificationPermission() {

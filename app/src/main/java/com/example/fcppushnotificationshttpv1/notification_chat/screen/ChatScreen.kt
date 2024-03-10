@@ -1,4 +1,4 @@
-package com.example.fcppushnotificationshttpv1.chat.screen
+package com.example.fcppushnotificationshttpv1.notification_chat.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -30,8 +30,7 @@ fun ChatScreen(
     onMessageBroadcast: () -> Unit
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -54,7 +53,7 @@ fun ChatScreen(
         ) {
             IconButton(onClick = onMessageSend) {
                 Icon(
-                    imageVector = Icons.Default.Send,
+                    imageVector = Icons.AutoMirrored.Filled.Send,
                     contentDescription = "Send"
                 )
             }
@@ -72,5 +71,5 @@ fun ChatScreen(
 @Preview
 @Composable
 fun ChatScreenPreview() {
-    ChatScreen(messageText = "Message Text", onMessageChange = {}, onMessageSend = {}, onMessageBroadcast = {})
+    ChatScreen(messageText = "", onMessageChange = {}, onMessageSend = {}, onMessageBroadcast = {})
 }

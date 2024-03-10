@@ -1,4 +1,4 @@
-package com.example.fcppushnotificationshttpv1.enter_token
+package com.example.fcppushnotificationshttpv1.notification_chat.screen
 
 import android.widget.Toast
 import androidx.compose.foundation.background
