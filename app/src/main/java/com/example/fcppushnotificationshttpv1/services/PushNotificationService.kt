@@ -1,4 +1,4 @@
-package com.example.fcppushnotificationshttpv1
+package com.example.fcppushnotificationshttpv1.services
 
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage

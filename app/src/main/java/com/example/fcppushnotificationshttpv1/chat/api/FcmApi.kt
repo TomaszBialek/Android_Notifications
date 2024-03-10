@@ -1,5 +1,6 @@
-package com.example.fcppushnotificationshttpv1
+package com.example.fcppushnotificationshttpv1.chat.api
 
+import com.example.fcppushnotificationshttpv1.model.SendMessageDto
 import retrofit2.http.Body
 import retrofit2.http.POST
 

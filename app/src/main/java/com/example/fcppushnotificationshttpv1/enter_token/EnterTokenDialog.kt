@@ -1,6 +1,5 @@
-package com.example.fcppushnotificationshttpv1
+package com.example.fcppushnotificationshttpv1.enter_token
 
-import android.widget.Space
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -24,6 +23,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -84,4 +84,10 @@ fun EnterTokenDialog(
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun EnterTokenDialogPreview() {
+    EnterTokenDialog(token = "Place to enter a token", onTokenChange = {}, onSubmit = {})
 }

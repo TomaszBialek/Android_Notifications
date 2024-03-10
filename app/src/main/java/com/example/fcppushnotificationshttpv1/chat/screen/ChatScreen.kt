@@ -1,4 +1,4 @@
-package com.example.fcppushnotificationshttpv1
+package com.example.fcppushnotificationshttpv1.chat.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -72,7 +72,5 @@ fun ChatScreen(
 @Preview
 @Composable
 fun ChatScreenPreview() {
-    ChatScreen(messageText = "Message Text", onMessageChange = {}, onMessageSend = {}) {
-
-    }
+    ChatScreen(messageText = "Message Text", onMessageChange = {}, onMessageSend = {}, onMessageBroadcast = {})
 }

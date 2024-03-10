@@ -11,9 +11,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.fcppushnotificationshttpv1.chat.screen.ChatScreen
+import com.example.fcppushnotificationshttpv1.chat.viewmodel.ChatViewModel
+import com.example.fcppushnotificationshttpv1.enter_token.EnterTokenDialog
 import com.example.fcppushnotificationshttpv1.ui.theme.FCPPushNotificationsHTTPV1Theme
 
 class MainActivity : ComponentActivity() {

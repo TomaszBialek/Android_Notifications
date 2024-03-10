@@ -1,4 +1,4 @@
-package com.example.fcppushnotificationshttpv1
+package com.example.fcppushnotificationshttpv1.chat.model
 
 data class ChatState(
     val isEnteringToken: Boolean = true,

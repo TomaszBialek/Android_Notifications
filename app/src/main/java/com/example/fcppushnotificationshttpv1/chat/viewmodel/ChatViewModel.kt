@@ -1,10 +1,14 @@
-package com.example.fcppushnotificationshttpv1
+package com.example.fcppushnotificationshttpv1.chat.viewmodel
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.fcppushnotificationshttpv1.chat.api.FcmApi
+import com.example.fcppushnotificationshttpv1.chat.model.ChatState
+import com.example.fcppushnotificationshttpv1.model.NotificationBody
+import com.example.fcppushnotificationshttpv1.model.SendMessageDto
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.ktx.messaging
 import kotlinx.coroutines.launch

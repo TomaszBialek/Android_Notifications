@@ -1,4 +1,4 @@
-package com.example.fcppushnotificationshttpv1
+package com.example.fcppushnotificationshttpv1.model
 
 data class SendMessageDto(
     val to: String?,
