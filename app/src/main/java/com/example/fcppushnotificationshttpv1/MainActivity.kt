@@ -1,9 +1,12 @@
 package com.example.fcppushnotificationshttpv1
 
 import android.Manifest
+import android.animation.ObjectAnimator
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.view.View
+import android.view.animation.OvershootInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -11,8 +14,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.core.animation.doOnEnd
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.fcppushnotificationshttpv1.chat.screen.ChatScreen
 import com.example.fcppushnotificationshttpv1.chat.viewmodel.ChatViewModel
 import com.example.fcppushnotificationshttpv1.enter_token.EnterTokenDialog
@@ -20,10 +25,43 @@ import com.example.fcppushnotificationshttpv1.ui.theme.FCPPushNotificationsHTTPV
 
 class MainActivity : ComponentActivity() {
 
-    private val viewModel: ChatViewModel by viewModels()
+    private val chatViewModel by viewModels<ChatViewModel>()
+    private val mainViewModel by viewModels<MainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        installSplashScreen().apply {
+            setKeepOnScreenCondition {
+                !mainViewModel.isReady.value
+            }
+            setOnExitAnimationListener { screen ->
+                val zoomX = ObjectAnimator.ofFloat(
+                    screen.iconView,
+                    View.SCALE_X,
+                    0.4f,
+                    0.0f
+                ).apply {
+                    interpolator = OvershootInterpolator()
+                    duration = 500L
+                    doOnEnd { screen.remove() }
+                }
+
+                val zoomY = ObjectAnimator.ofFloat(
+                    screen.iconView,
+                    View.SCALE_Y,
+                    0.4f,
+                    0.0f
+                ).apply {
+                    interpolator  = OvershootInterpolator()
+                    duration = 500L
+                    doOnEnd { screen.remove() }
+                }
+
+                zoomX.start()
+                zoomY.start()
+            }
+        }
+
         requestNotificationPermission()
         setContent {
             FCPPushNotificationsHTTPV1Theme {
@@ -31,23 +69,23 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background,
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    val state = viewModel.state
+                    val state = chatViewModel.state
                     if (state.isEnteringToken) {
                         EnterTokenDialog(
                             token = state.remoteToken,
-                            onTokenChange = viewModel::onRemoteTokenChange,
-                            onSubmit = viewModel::onSubmitRemoteToken
+                            onTokenChange = chatViewModel::onRemoteTokenChange,
+                            onSubmit = chatViewModel::onSubmitRemoteToken
                         )
                     } else {
                         ChatScreen(
                             messageText = state.messageText,
                             onMessageSend = {
-                                viewModel.sendMessage(isBroadcast = false)
+                                chatViewModel.sendMessage(isBroadcast = false)
                             },
                             onMessageBroadcast = {
-                                viewModel.sendMessage(isBroadcast = true)
+                                chatViewModel.sendMessage(isBroadcast = true)
                             },
-                            onMessageChange = viewModel::onMessageChange
+                            onMessageChange = chatViewModel::onMessageChange
                         )
                     }
                 }
@@ -57,10 +95,17 @@ class MainActivity : ComponentActivity() {
 
     private fun requestNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            val hasPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+            val hasPermission = ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
 
             if (!hasPermission) {
-                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 0)
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                    0
+                )
             }
         }
     }
