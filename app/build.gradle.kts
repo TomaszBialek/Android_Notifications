@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     id("com.google.gms.google-services")
+    alias(libs.plugins.serializationKotlinAndroid)
 }
 
 android {
@@ -73,6 +74,8 @@ dependencies {
     implementation(libs.converter.moshi)
 
     implementation(libs.androidx.core.splashscreen)
+
+    implementation(libs.kotlinx.serialization.json)
 
     testImplementation(libs.junit)
 

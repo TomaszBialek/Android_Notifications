@@ -44,7 +44,7 @@ fun EnterTokenDialog(
 
     Dialog(
         onDismissRequest = {},
-        properties = DialogProperties(dismissOnBackPress =  false, dismissOnClickOutside = false)
+        properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
     ) {
         Column(
             modifier = Modifier
