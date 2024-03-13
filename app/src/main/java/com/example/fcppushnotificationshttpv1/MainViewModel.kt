@@ -10,9 +10,9 @@ import kotlinx.coroutines.launch
 class MainViewModel : ViewModel() {
 
     val destinations = listOf(
-        Destination("notification", true),
-        Destination("wifi"),
-        Destination("bluetooth"),
+        Destination("notification", "NotificationChatScreen", true),
+        Destination("wifi", "WifiP2pConnectionScreen", true),
+        Destination("bluetooth", "BluetoothChatScreen"),
     )
 
     private val _isReady = MutableStateFlow(false)
@@ -26,7 +26,10 @@ class MainViewModel : ViewModel() {
     }
 }
 
+typealias Route = String
+
 data class Destination(
     val destination: String,
+    val route: Route,
     val isEnabled: Boolean = false
 )

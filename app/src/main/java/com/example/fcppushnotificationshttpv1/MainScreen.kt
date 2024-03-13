@@ -57,7 +57,7 @@ private fun DestinationItem(
             .fillMaxWidth()
             .padding(16.dp),
         onClick = {
-            navController.navigate("NotificationChatScreen/${destination.destination}")
+            navController.navigate(destination.route)
             Toast.makeText(
                 context,
                 destination.destination.toUpperCase(Locale.current),
