@@ -89,16 +89,6 @@ fun WiFiDirectBroadcastReceiver(
                 manager.requestPeers(channel, peerListListener)
                 Log.d("WiFiDirectBroadcastReceiver", "P2P peers changed")
                 wifiDirectListener.thisDeviceChangedAction(p2pDevice)
-
-
-                //TODO:
-//                (activity.supportFragmentManager.findFragmentById(R.id.frag_list) as DeviceListFragment)
-//                    .apply {
-//                        updateThisDevice(
-//                            intent.getParcelableExtra(
-//                                WifiP2pManager.EXTRA_WIFI_P2P_DEVICE) as WifiP2pDevice
-//                        )
-//                    }
             }
         }
 

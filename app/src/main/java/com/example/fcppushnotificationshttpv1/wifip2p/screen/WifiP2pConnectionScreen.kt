@@ -1,22 +1,36 @@
 package com.example.fcppushnotificationshttpv1.wifip2p.screen
 
 import android.content.Context
+import android.content.Intent
 import android.net.NetworkInfo
 import android.net.wifi.p2p.WifiP2pDevice
 import android.net.wifi.p2p.WifiP2pDeviceList
 import android.net.wifi.p2p.WifiP2pGroup
 import android.net.wifi.p2p.WifiP2pInfo
 import android.net.wifi.p2p.WifiP2pManager
+import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -90,6 +104,11 @@ fun WifiP2pConnectionScreen() {
         mutableStateOf(false)
     }
 
+    val intent = Intent(Settings.ACTION_WIFI_SETTINGS)
+    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
+        // should be empty
+    }
+
     Surface {
         Column {
             Text(
@@ -99,7 +118,9 @@ fun WifiP2pConnectionScreen() {
             )
             Spacer(modifier = Modifier.padding(16.dp))
             Row {
-                Button(onClick = { /*TODO*/ }) {
+                Button(onClick = {
+                    launcher.launch(intent)
+                }) {
                     Text(text = "On/Off")
                 }
                 Spacer(modifier = Modifier.padding(16.dp))
@@ -130,6 +151,31 @@ fun WifiP2pConnectionScreen() {
             }
             Spacer(modifier = Modifier.padding(16.dp))
             DeviceList()
+            HorizontalDivider(thickness = 10.dp)
+            Spacer(modifier = Modifier.padding(16.dp))
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = "Message",
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.padding(16.dp))
+
+            var text by remember { mutableStateOf("Name") }
+
+            Row {
+                TextField(
+                    modifier = Modifier.weight(1.0f),
+                    value = text,
+                    onValueChange = { text = it },
+                    label = { Text("Enter a message") }
+                )
+                IconButton(onClick = {}) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.Send,
+                        contentDescription = "Send"
+                    )
+                }
+            }
         }
     }
 }
