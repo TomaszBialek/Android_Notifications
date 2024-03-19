@@ -57,7 +57,7 @@ class MainActivity : ComponentActivity() {
                             MainScreen(navController = navController)
                         }
                         composable(
-                            route = "NotificationChatScreen/"
+                            route = "NotificationChatScreen"
                         ) {
                             NotificationChatScreen()
                         }

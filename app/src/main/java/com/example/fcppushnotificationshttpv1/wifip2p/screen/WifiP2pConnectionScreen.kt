@@ -12,7 +12,6 @@ import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,8 +20,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
-import androidx.compose.material.icons.filled.Send
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -30,7 +27,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,13 +45,32 @@ import com.example.fcppushnotificationshttpv1.receivers.WifiDirectListener
 @Composable
 fun WifiP2pConnectionScreen() {
 
-    val peers = mutableListOf<WifiP2pDevice>()
+    val context = LocalContext.current
+
+    var peers by rememberSaveable {
+        mutableStateOf(listOf<WifiP2pDevice>())
+    }
+
+    var deviceNameArray by rememberSaveable {
+        mutableStateOf(arrayOf<String>())
+    }
+
+    var deviceArray by rememberSaveable {
+        mutableStateOf(arrayOf<WifiP2pDevice>())
+    }
 
     val peerListListener = WifiP2pManager.PeerListListener { peerList ->
-        val refreshedPeers = peerList.deviceList
+        val refreshedPeers = peerList.deviceList.toList()
         if (refreshedPeers != peers) {
-            peers.clear()
-            peers.addAll(refreshedPeers)
+            peers = refreshedPeers
+
+            deviceNameArray = peerList.deviceList.map { it.deviceName }.toTypedArray()
+            deviceArray = peerList.deviceList.toTypedArray()
+
+            if (peers.isEmpty()) {
+                Toast.makeText(context, "No Device Found", Toast.LENGTH_SHORT).show()
+                return@PeerListListener
+            }
 
             // If an AdapterView is backed by this data, notify it
             // of the change. For instance, if you have a ListView of
@@ -73,7 +88,6 @@ fun WifiP2pConnectionScreen() {
         }
     }
 
-    val context = LocalContext.current
     val manager: WifiP2pManager =
         context.getSystemService(Context.WIFI_P2P_SERVICE) as WifiP2pManager
     val channel: WifiP2pManager.Channel = manager.initialize(context, context.mainLooper, null)
@@ -150,7 +164,7 @@ fun WifiP2pConnectionScreen() {
 
             }
             Spacer(modifier = Modifier.padding(16.dp))
-            DeviceList()
+            DeviceList(deviceArray)
             HorizontalDivider(thickness = 10.dp)
             Spacer(modifier = Modifier.padding(16.dp))
             Text(
@@ -162,7 +176,7 @@ fun WifiP2pConnectionScreen() {
 
             var text by remember { mutableStateOf("Name") }
 
-            Row {
+            Row(modifier = Modifier.weight(1f,false)) {
                 TextField(
                     modifier = Modifier.weight(1.0f),
                     value = text,

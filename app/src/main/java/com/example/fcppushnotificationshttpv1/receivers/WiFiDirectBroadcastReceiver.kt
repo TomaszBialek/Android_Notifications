@@ -48,6 +48,8 @@ fun WiFiDirectBroadcastReceiver(
                     intent.getParcelableExtra(WifiP2pManager.EXTRA_P2P_DEVICE_LIST)
                 }
 
+                manager.requestPeers(channel, peerListListener)
+
                 wifiDirectListener.peersChangedAction(deviceList)
             }
 

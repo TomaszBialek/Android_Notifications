@@ -16,13 +16,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
-fun DeviceList() {
-    val list = listOf(
-        WifiP2pDevice().apply { this.deviceAddress = "1" },
-        WifiP2pDevice().apply { this.deviceAddress = "1" },
-        WifiP2pDevice().apply { this.deviceAddress = "1" }
-    )
-
+fun DeviceList(
+    list: Array<WifiP2pDevice>
+) {
     LazyColumn {
         items(list) { wifiDevice ->
             DeviceItem(wifiDevice)
@@ -60,7 +56,12 @@ fun DeviceItem(item: WifiP2pDevice) {
 @Preview
 @Composable
 fun DeviceListPreview() {
-    DeviceList()
+    val array = arrayOf(
+        WifiP2pDevice().apply { this.deviceAddress = "1" },
+        WifiP2pDevice().apply { this.deviceAddress = "2" },
+        WifiP2pDevice().apply { this.deviceAddress = "3" }
+    )
+    DeviceList(array)
 }
 
 @Preview
