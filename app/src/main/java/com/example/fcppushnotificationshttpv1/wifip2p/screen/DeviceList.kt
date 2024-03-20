@@ -1,6 +1,7 @@
 package com.example.fcppushnotificationshttpv1.wifip2p.screen
 
 import android.net.wifi.p2p.WifiP2pDevice
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,22 +18,30 @@ import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun DeviceList(
-    list: Array<WifiP2pDevice>
+    list: Array<WifiP2pDevice>,
+    onItemClickListener: (WifiP2pDevice) -> Unit
 ) {
     LazyColumn {
         items(list) { wifiDevice ->
-            DeviceItem(wifiDevice)
+            DeviceItem(wifiDevice, onItemClickListener)
         }
     }
 }
 
 @Composable
-fun DeviceItem(item: WifiP2pDevice) {
+fun DeviceItem(
+    item: WifiP2pDevice,
+    onItemClickListener: (WifiP2pDevice) -> Unit
+) {
     Surface(
         modifier = Modifier.fillMaxWidth()
     ) {
         HorizontalDivider()
-        Column {
+        Column(
+            modifier = Modifier.clickable {
+                onItemClickListener(item)
+            }
+        ) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
@@ -61,7 +70,9 @@ fun DeviceListPreview() {
         WifiP2pDevice().apply { this.deviceAddress = "2" },
         WifiP2pDevice().apply { this.deviceAddress = "3" }
     )
-    DeviceList(array)
+    DeviceList(array) {
+
+    }
 }
 
 @Preview
@@ -73,7 +84,9 @@ fun DeviceItemPreview() {
         this.primaryDeviceType = "primaryType"
         this.secondaryDeviceType = "secondaryType"
         this.status = WifiP2pDevice.AVAILABLE
-    })
+    }) {
+
+    }
 }
 
 fun WifiP2pDevice.getDeviceStatus(): String {

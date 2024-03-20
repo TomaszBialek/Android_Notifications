@@ -3,6 +3,7 @@ package com.example.fcppushnotificationshttpv1.wifip2p.screen
 import android.content.Context
 import android.content.Intent
 import android.net.NetworkInfo
+import android.net.wifi.p2p.WifiP2pConfig
 import android.net.wifi.p2p.WifiP2pDevice
 import android.net.wifi.p2p.WifiP2pDeviceList
 import android.net.wifi.p2p.WifiP2pGroup
@@ -71,20 +72,20 @@ fun WifiP2pConnectionScreen() {
                 Toast.makeText(context, "No Device Found", Toast.LENGTH_SHORT).show()
                 return@PeerListListener
             }
-
-            // If an AdapterView is backed by this data, notify it
-            // of the change. For instance, if you have a ListView of
-            // available peers, trigger an update.
-            //TODO:
-//            (listAdapter as WiFiPeerListAdapter).notifyDataSetChanged()
-
-            // Perform any other updates needed based on the new list of
-            // peers connected to the Wi-Fi P2P network.
         }
 
         if (peers.isEmpty()) {
             Log.d("WifiP2pConnectionScreen", "No devices found")
             return@PeerListListener
+        }
+    }
+
+    val connectionInfoListener = WifiP2pManager.ConnectionInfoListener { wifiP2pInfo ->
+        val groupOwnerAddress = wifiP2pInfo.groupOwnerAddress
+        if (wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner) {
+            Toast.makeText(context, "Host", Toast.LENGTH_SHORT).show()
+        } else if (wifiP2pInfo.groupFormed) {
+            Toast.makeText(context, "Client", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -106,7 +107,13 @@ fun WifiP2pConnectionScreen() {
             networkInfo: NetworkInfo?,
             p2pGroup: WifiP2pGroup?
         ) {
-            val a = 5
+            networkInfo?.let {
+                if (it.isConnected) {
+                    manager.requestConnectionInfo(channel, connectionInfoListener)
+                } else {
+                    Toast.makeText(context, "Not Connected", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
 
         override fun thisDeviceChangedAction(p2pDevice: WifiP2pDevice?) {
@@ -164,7 +171,21 @@ fun WifiP2pConnectionScreen() {
 
             }
             Spacer(modifier = Modifier.padding(16.dp))
-            DeviceList(deviceArray)
+            DeviceList(deviceArray) { device ->
+                val config = WifiP2pConfig().apply {
+                    deviceAddress = device.deviceAddress
+                }
+                manager.connect(channel, config, object : WifiP2pManager.ActionListener {
+                    override fun onSuccess() {
+                        Toast.makeText(context, "Connected: ${device.deviceAddress}", Toast.LENGTH_LONG).show()
+                    }
+
+                    override fun onFailure(p0: Int) {
+                        Toast.makeText(context, "Connecting to the device failed", Toast.LENGTH_LONG).show()
+                    }
+
+                })
+            }
             HorizontalDivider(thickness = 10.dp)
             Spacer(modifier = Modifier.padding(16.dp))
             Text(
@@ -176,7 +197,9 @@ fun WifiP2pConnectionScreen() {
 
             var text by remember { mutableStateOf("Name") }
 
-            Row(modifier = Modifier.weight(1f,false)) {
+            Spacer(modifier = Modifier.weight(1f))
+
+            Row {
                 TextField(
                     modifier = Modifier.weight(1.0f),
                     value = text,
