@@ -9,6 +9,8 @@ import android.net.wifi.p2p.WifiP2pDeviceList
 import android.net.wifi.p2p.WifiP2pGroup
 import android.net.wifi.p2p.WifiP2pInfo
 import android.net.wifi.p2p.WifiP2pManager
+import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
@@ -41,6 +43,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.fcppushnotificationshttpv1.receivers.WiFiDirectBroadcastReceiver
 import com.example.fcppushnotificationshttpv1.receivers.WifiDirectListener
+import java.io.InputStream
+import java.io.OutputStream
+import java.net.InetAddress
+import java.net.InetSocketAddress
+import java.net.ServerSocket
+import java.net.Socket
+import java.util.concurrent.Executors
 
 @SuppressWarnings("MissingPermission")
 @Composable
@@ -221,4 +230,74 @@ fun WifiP2pConnectionScreen() {
 @Composable
 fun WifiP2pConnectionScreenPreview() {
     WifiP2pConnectionScreen()
+}
+
+class ServerClass : Thread() {
+    lateinit var serverSocket: ServerSocket
+    private lateinit var inputStream: InputStream
+    private lateinit var outputStream: OutputStream
+
+    override fun run() {
+        serverSocket = ServerSocket(8888)
+        socket = serverSocket.accept()
+        inputStream = socket.getInputStream()
+        outputStream = socket.getOutputStream()
+
+        val executor = Executors.newSingleThreadExecutor()
+        val handler = Handler(Looper.getMainLooper())
+
+        executor.execute {
+            val buffer = ByteArray(1024)
+
+            while (socket != null) {
+                val bytes = inputStream.read(buffer)
+                if (bytes > 0) {
+                    val finalBytes = bytes
+                    handler.post {
+                        val tempMSG = String(buffer, 0, finalBytes)
+                        //TODO: send text to the tempMSG value
+                    }
+                }
+            }
+        }
+    }
+}
+
+lateinit var socket: Socket
+
+class ClientClass(
+    hostAddress: InetAddress
+) : Thread() {
+    val hostAdd: String
+    private lateinit var inputStream: InputStream
+    private lateinit var outputStream: OutputStream
+
+    init {
+        hostAdd = hostAddress.hostAddress
+        socket = Socket()
+    }
+
+    override fun run() {
+        socket.connect(InetSocketAddress(hostAdd, 8888), 500)
+        inputStream = socket.getInputStream()
+        outputStream = socket.getOutputStream()
+
+        val executor = Executors.newSingleThreadExecutor()
+        val handler = Handler(Looper.getMainLooper())
+
+        executor.execute {
+            val buffer = ByteArray(1024)
+
+            while (socket != null) {
+                val bytes = inputStream.read(buffer)
+                if (bytes > 0) {
+                    val finalBytes = bytes
+                    handler.post {
+                        val tempMSG = String(buffer, 0, finalBytes)
+                        //TODO: send text to the tempMSG value
+                    }
+                }
+            }
+        }
+    }
 }
