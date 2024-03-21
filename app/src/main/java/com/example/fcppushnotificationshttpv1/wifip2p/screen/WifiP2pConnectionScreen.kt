@@ -89,12 +89,26 @@ fun WifiP2pConnectionScreen() {
         }
     }
 
+    var messageField by rememberSaveable {
+        mutableStateOf("Message")
+    }
+
     val connectionInfoListener = WifiP2pManager.ConnectionInfoListener { wifiP2pInfo ->
         val groupOwnerAddress = wifiP2pInfo.groupOwnerAddress
         if (wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner) {
             Toast.makeText(context, "Host", Toast.LENGTH_SHORT).show()
+            isHost = true
+            serverClass = ServerClass() {
+                messageField = it
+            }
+            serverClass.start()
         } else if (wifiP2pInfo.groupFormed) {
             Toast.makeText(context, "Client", Toast.LENGTH_SHORT).show()
+            isHost = false
+            clientClass = ClientClass(groupOwnerAddress) {
+                messageField = it
+            }
+            clientClass.start()
         }
     }
 
@@ -103,13 +117,9 @@ fun WifiP2pConnectionScreen() {
     val channel: WifiP2pManager.Channel = manager.initialize(context, context.mainLooper, null)
 
     WiFiDirectBroadcastReceiver(manager, channel, peerListListener, object : WifiDirectListener {
-        override fun stateChangedAction(isWifiP2PEnabled: Boolean) {
-            val a = 5
-        }
+        override fun stateChangedAction(isWifiP2PEnabled: Boolean) = Unit
 
-        override fun peersChangedAction(deviceList: WifiP2pDeviceList?) {
-            val a = 5
-        }
+        override fun peersChangedAction(deviceList: WifiP2pDeviceList?) = Unit
 
         override fun connectionChangedAction(
             p2pInfo: WifiP2pInfo?,
@@ -125,9 +135,7 @@ fun WifiP2pConnectionScreen() {
             }
         }
 
-        override fun thisDeviceChangedAction(p2pDevice: WifiP2pDevice?) {
-            val a = 5
-        }
+        override fun thisDeviceChangedAction(p2pDevice: WifiP2pDevice?) = Unit
     })
 
     var connectionStatus by rememberSaveable {
@@ -199,7 +207,7 @@ fun WifiP2pConnectionScreen() {
             Spacer(modifier = Modifier.padding(16.dp))
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = "Message",
+                text = messageField,
                 textAlign = TextAlign.Center
             )
             Spacer(modifier = Modifier.padding(16.dp))
@@ -215,7 +223,18 @@ fun WifiP2pConnectionScreen() {
                     onValueChange = { text = it },
                     label = { Text("Enter a message") }
                 )
-                IconButton(onClick = {}) {
+                IconButton(onClick = {
+                    val executor = Executors.newSingleThreadExecutor()
+                    val msg = text
+                    text = ""
+                    executor.execute {
+                        if (isHost) {
+                            serverClass.write(msg.toByteArray())
+                        } else {
+                            clientClass.write(msg.toByteArray())
+                        }
+                    }
+                }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.Send,
                         contentDescription = "Send"
@@ -232,10 +251,16 @@ fun WifiP2pConnectionScreenPreview() {
     WifiP2pConnectionScreen()
 }
 
-class ServerClass : Thread() {
+class ServerClass(
+    val textListener: ((String) -> Unit)
+) : Thread() {
     lateinit var serverSocket: ServerSocket
     private lateinit var inputStream: InputStream
     private lateinit var outputStream: OutputStream
+
+    fun write(bytes: ByteArray) {
+        outputStream.write(bytes)
+    }
 
     override fun run() {
         serverSocket = ServerSocket(8888)
@@ -249,13 +274,13 @@ class ServerClass : Thread() {
         executor.execute {
             val buffer = ByteArray(1024)
 
-            while (socket != null) {
+            while (true) {
                 val bytes = inputStream.read(buffer)
                 if (bytes > 0) {
                     val finalBytes = bytes
                     handler.post {
                         val tempMSG = String(buffer, 0, finalBytes)
-                        //TODO: send text to the tempMSG value
+                        textListener(tempMSG)
                     }
                 }
             }
@@ -264,9 +289,13 @@ class ServerClass : Thread() {
 }
 
 lateinit var socket: Socket
+lateinit var serverClass: ServerClass
+lateinit var clientClass: ClientClass
+var isHost: Boolean = false
 
 class ClientClass(
-    hostAddress: InetAddress
+    hostAddress: InetAddress,
+    val textListener: ((String) -> Unit)
 ) : Thread() {
     val hostAdd: String
     private lateinit var inputStream: InputStream
@@ -275,6 +304,10 @@ class ClientClass(
     init {
         hostAdd = hostAddress.hostAddress
         socket = Socket()
+    }
+
+    fun write(bytes: ByteArray) {
+        outputStream.write(bytes)
     }
 
     override fun run() {
@@ -288,13 +321,13 @@ class ClientClass(
         executor.execute {
             val buffer = ByteArray(1024)
 
-            while (socket != null) {
+            while (true) {
                 val bytes = inputStream.read(buffer)
                 if (bytes > 0) {
                     val finalBytes = bytes
                     handler.post {
                         val tempMSG = String(buffer, 0, finalBytes)
-                        //TODO: send text to the tempMSG value
+                        textListener(tempMSG)
                     }
                 }
             }
