@@ -19,11 +19,12 @@ import androidx.compose.ui.tooling.preview.Preview
 @Composable
 fun DeviceList(
     list: Array<WifiP2pDevice>,
-    onItemClickListener: (WifiP2pDevice) -> Unit
+    onConnectItemClickListener: (WifiP2pDevice) -> Unit,
+    onDisconnectItemClickListener: (WifiP2pDevice) -> Unit,
 ) {
     LazyColumn {
         items(list) { wifiDevice ->
-            DeviceItem(wifiDevice, onItemClickListener)
+            DeviceItem(wifiDevice, onConnectItemClickListener, onDisconnectItemClickListener)
         }
     }
 }
@@ -31,7 +32,8 @@ fun DeviceList(
 @Composable
 fun DeviceItem(
     item: WifiP2pDevice,
-    onItemClickListener: (WifiP2pDevice) -> Unit
+    onConnectItemClickListener: (WifiP2pDevice) -> Unit,
+    onDisconnectItemClickListener: (WifiP2pDevice) -> Unit,
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth()
@@ -39,17 +41,21 @@ fun DeviceItem(
         HorizontalDivider()
         Column(
             modifier = Modifier.clickable {
-                onItemClickListener(item)
+                onConnectItemClickListener(item)
             }
         ) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Button(onClick = { }) {
+                Button(onClick = {
+                    onConnectItemClickListener(item)
+                }) {
                     Text(text = "Connect")
                 }
-                Button(onClick = { }) {
+                Button(onClick = {
+                    onDisconnectItemClickListener(item)
+                }) {
                     Text(text = "Disconnect")
                 }
             }
@@ -70,9 +76,11 @@ fun DeviceListPreview() {
         WifiP2pDevice().apply { this.deviceAddress = "2" },
         WifiP2pDevice().apply { this.deviceAddress = "3" }
     )
-    DeviceList(array) {
+    DeviceList(array, {
 
-    }
+    }, {
+
+    })
 }
 
 @Preview
@@ -84,9 +92,11 @@ fun DeviceItemPreview() {
         this.primaryDeviceType = "primaryType"
         this.secondaryDeviceType = "secondaryType"
         this.status = WifiP2pDevice.AVAILABLE
-    }) {
+    }, {
 
-    }
+    }, {
+
+    })
 }
 
 fun WifiP2pDevice.getDeviceStatus(): String {

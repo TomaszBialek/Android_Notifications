@@ -1,7 +1,9 @@
 package com.example.fcppushnotificationshttpv1.wifip2p.screen
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.NetworkInfo
 import android.net.wifi.p2p.WifiP2pConfig
 import android.net.wifi.p2p.WifiP2pDevice
@@ -41,10 +43,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
 import com.example.fcppushnotificationshttpv1.receivers.WiFiDirectBroadcastReceiver
 import com.example.fcppushnotificationshttpv1.receivers.WifiDirectListener
 import java.io.InputStream
 import java.io.OutputStream
+import java.lang.Exception
 import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.net.ServerSocket
@@ -129,8 +133,6 @@ fun WifiP2pConnectionScreen() {
             networkInfo?.let {
                 if (it.isConnected) {
                     manager.requestConnectionInfo(channel, connectionInfoListener)
-                } else {
-                    Toast.makeText(context, "Not Connected", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -143,9 +145,10 @@ fun WifiP2pConnectionScreen() {
     }
 
     val intent = Intent(Settings.ACTION_WIFI_SETTINGS)
-    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
-        // should be empty
-    }
+    val launcher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
+            // should be empty
+        }
 
     Surface {
         Column {
@@ -170,7 +173,7 @@ fun WifiP2pConnectionScreen() {
 
                         override fun onFailure(reason: Int) {
                             // Remember to grant the location permission
-                            val toastText = when(reason) {
+                            val toastText = when (reason) {
                                 WifiP2pManager.P2P_UNSUPPORTED -> "P2p is unsupported on the device."
                                 WifiP2pManager.ERROR -> "Operation failed due to an internal error."
                                 WifiP2pManager.BUSY -> "Operation failed because the framework is busy and unable to service the request"
@@ -188,21 +191,65 @@ fun WifiP2pConnectionScreen() {
 
             }
             Spacer(modifier = Modifier.padding(16.dp))
-            DeviceList(deviceArray) { device ->
+            DeviceList(deviceArray, { device ->
                 val config = WifiP2pConfig().apply {
                     deviceAddress = device.deviceAddress
                 }
                 manager.connect(channel, config, object : WifiP2pManager.ActionListener {
                     override fun onSuccess() {
-                        Toast.makeText(context, "Connected: ${device.deviceAddress}", Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            context,
+                            "Connected: ${device.deviceAddress}",
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
 
                     override fun onFailure(p0: Int) {
-                        Toast.makeText(context, "Connecting to the device failed", Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            context,
+                            "Connecting to the device failed",
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
 
                 })
-            }
+            }, { device ->
+                if (ActivityCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    return@DeviceList
+                }
+
+
+                manager.requestGroupInfo(channel, object : WifiP2pManager.GroupInfoListener {
+                    override fun onGroupInfoAvailable(group: WifiP2pGroup?) {
+                        if (group == null)
+                            return
+
+
+                        manager.removeGroup(
+                            channel, object : WifiP2pManager.ActionListener {
+                                override fun onSuccess() {
+                                    socket.close()
+                                    Toast.makeText(context, "Connection removed", Toast.LENGTH_LONG)
+                                        .show()
+                                }
+
+                                override fun onFailure(p0: Int) {
+                                    Toast.makeText(
+                                        context,
+                                        "Connection removing failed",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
+
+                            })
+                    }
+                })
+            })
+
             HorizontalDivider(thickness = 10.dp)
             Spacer(modifier = Modifier.padding(16.dp))
             Text(
@@ -212,7 +259,7 @@ fun WifiP2pConnectionScreen() {
             )
             Spacer(modifier = Modifier.padding(16.dp))
 
-            var text by remember { mutableStateOf("Name") }
+            var text by remember { mutableStateOf("") }
 
             Spacer(modifier = Modifier.weight(1f))
 
@@ -274,15 +321,19 @@ class ServerClass(
         executor.execute {
             val buffer = ByteArray(1024)
 
-            while (true) {
-                val bytes = inputStream.read(buffer)
-                if (bytes > 0) {
-                    val finalBytes = bytes
-                    handler.post {
-                        val tempMSG = String(buffer, 0, finalBytes)
-                        textListener(tempMSG)
+            try {
+                while (!socket.isClosed) {
+                    val bytes = inputStream.read(buffer)
+                    if (bytes > 0) {
+                        val finalBytes = bytes
+                        handler.post {
+                            val tempMSG = String(buffer, 0, finalBytes)
+                            textListener(tempMSG)
+                        }
                     }
                 }
+            } catch (e: Exception) {
+                // should be empty
             }
         }
     }
@@ -311,7 +362,7 @@ class ClientClass(
     }
 
     override fun run() {
-        socket.connect(InetSocketAddress(hostAdd, 8888), 500)
+        socket.connect(InetSocketAddress(hostAdd, 8888), 5_000)
         inputStream = socket.getInputStream()
         outputStream = socket.getOutputStream()
 
@@ -321,15 +372,19 @@ class ClientClass(
         executor.execute {
             val buffer = ByteArray(1024)
 
-            while (true) {
-                val bytes = inputStream.read(buffer)
-                if (bytes > 0) {
-                    val finalBytes = bytes
-                    handler.post {
-                        val tempMSG = String(buffer, 0, finalBytes)
-                        textListener(tempMSG)
+            try {
+                while (socket.isClosed) {
+                    val bytes = inputStream.read(buffer)
+                    if (bytes > 0) {
+                        val finalBytes = bytes
+                        handler.post {
+                            val tempMSG = String(buffer, 0, finalBytes)
+                            textListener(tempMSG)
+                        }
                     }
                 }
+            } catch (e: Exception) {
+                // should be empty
             }
         }
     }
