@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FCP Push Notifications HTTP V1</string>
+    <string name="device_status_available">Dostępny</string>
+    <string name="device_status_invited">Zaproszony</string>
+    <string name="device_status_connected">Połączony</string>
+    <string name="device_status_failed">Niepowodzenie</string>
+    <string name="device_status_unavailable">Niedostępny</string>
+    <string name="device_status_unknown">Nieznany</string>
+</resources>

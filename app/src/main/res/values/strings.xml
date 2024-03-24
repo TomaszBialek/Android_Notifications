@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">FCP Push Notifications HTTP V1</string>
+    <string name="device_status_available">Available</string>
+    <string name="device_status_invited">Invited</string>
+    <string name="device_status_connected">Connected</string>
+    <string name="device_status_failed">Failed</string>
+    <string name="device_status_unavailable">Unavailable</string>
+    <string name="device_status_unknown">Unknown</string>
 </resources>
