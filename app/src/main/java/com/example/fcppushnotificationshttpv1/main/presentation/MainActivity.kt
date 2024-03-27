@@ -57,13 +57,14 @@ class MainActivity : ComponentActivity() {
                         composable(route = "MainScreen") {
                             MainScreen(navController = navController)
                         }
-                        composable(
-                            route = "NotificationChatScreen"
-                        ) {
+                        composable(route = "NotificationChatScreen") {
                             NotificationChatScreen()
                         }
                         composable(route = "WifiP2pConnectionScreen") {
                             WifiP2pConnectionScreen()
+                        }
+                        composable(route ="PrivateNotesScreen") {
+
                         }
                     }
                 }

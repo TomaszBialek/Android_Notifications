@@ -13,6 +13,7 @@ class MainViewModel : ViewModel() {
         Destination("notification", "NotificationChatScreen", true),
         Destination("wifi", "WifiP2pConnectionScreen", true),
         Destination("bluetooth", "BluetoothChatScreen"),
+        Destination("private notes", "PrivateNotesScreen", true),
     )
 
     private val _isReady = MutableStateFlow(false)
