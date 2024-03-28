@@ -7,6 +7,7 @@ import com.example.fcppushnotificationshttpv1.private_notes.data.repository.Note
 import com.example.fcppushnotificationshttpv1.private_notes.domain.repository.NoteRepository
 import com.example.fcppushnotificationshttpv1.private_notes.domain.use_case.AddNoteUseCase
 import com.example.fcppushnotificationshttpv1.private_notes.domain.use_case.DeleteNoteUseCase
+import com.example.fcppushnotificationshttpv1.private_notes.domain.use_case.GetNoteUseCase
 import com.example.fcppushnotificationshttpv1.private_notes.domain.use_case.GetNotesUseCase
 import com.example.fcppushnotificationshttpv1.private_notes.domain.use_case.NoteUseCases
 import dagger.Module
@@ -41,7 +42,8 @@ object AppModule {
         return NoteUseCases(
             getNotes = GetNotesUseCase(repository),
             deleteNote = DeleteNoteUseCase(repository),
-            addNote = AddNoteUseCase(repository)
+            addNote = AddNoteUseCase(repository),
+            getNote = GetNoteUseCase(repository)
         )
     }
 }
