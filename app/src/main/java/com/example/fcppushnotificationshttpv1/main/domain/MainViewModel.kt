@@ -30,7 +30,7 @@ class MainViewModel : ViewModel() {
 typealias Route = String
 
 data class Destination(
-    val destination: String,
+    val description: String,
     val route: Route,
     val isEnabled: Boolean = false
 )

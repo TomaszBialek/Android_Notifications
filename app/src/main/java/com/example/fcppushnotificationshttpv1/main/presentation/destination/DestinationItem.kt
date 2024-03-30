@@ -31,14 +31,14 @@ fun DestinationItem(
             navController.navigate(destination.route)
             Toast.makeText(
                 context,
-                destination.destination.toUpperCase(Locale.current),
+                destination.description.toUpperCase(Locale.current),
                 Toast.LENGTH_SHORT
             ).show()
         },
         enabled = destination.isEnabled
     ) {
         Text(
-            text = destination.destination.toUpperCase(Locale.current),
+            text = destination.description.toUpperCase(Locale.current),
             fontWeight = FontWeight.Bold,
             fontSize = 16.sp
         )
