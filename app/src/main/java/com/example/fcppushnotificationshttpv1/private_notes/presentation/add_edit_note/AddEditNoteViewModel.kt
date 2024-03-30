@@ -121,6 +121,6 @@ class AddEditNoteViewModel @Inject constructor(
 
     sealed class UiEvent {
         data class ShowSnackbar(val message: String) : UiEvent()
-        object SaveNote : UiEvent()
+        data object SaveNote : UiEvent()
     }
 }
