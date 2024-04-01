@@ -3,6 +3,9 @@ package com.example.fcppushnotificationshttpv1.main.presentation
 import android.Manifest
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothManager
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -10,10 +13,12 @@ import android.view.View
 import android.view.animation.OvershootInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.core.animation.doOnEnd
 import androidx.core.app.ActivityCompat
@@ -25,6 +30,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.fcppushnotificationshttpv1.bluetooth.presentation.components.BluetoothChatScreen
 import com.example.fcppushnotificationshttpv1.core.Screen
 import com.example.fcppushnotificationshttpv1.main.domain.MainViewModel
 import com.example.fcppushnotificationshttpv1.notification.chat.presentation.NotificationChatScreen
@@ -38,6 +44,17 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private val mainViewModel by viewModels<MainViewModel>()
+
+    private val bluetoothManager by lazy {
+        applicationContext.getSystemService(BluetoothManager::class.java)
+    }
+
+    private val bluetoothAdapter by lazy {
+        bluetoothManager?.adapter
+    }
+
+    private val isBluetoothEnabled: Boolean
+        get() = bluetoothAdapter?.isEnabled == true
 
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,8 +70,38 @@ class MainActivity : ComponentActivity() {
 
         requestNotificationPermission()
 
+        val enableBluetoothLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) {
+            // Should be empty
+        }
+
+        val permissionLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { perms ->
+            val canEnableBluetooth = if (Build.VERSION.SDK_INT > Build.VERSION_CODES.S) {
+                perms[Manifest.permission.BLUETOOTH_CONNECT] == true
+            } else true
+
+            if (canEnableBluetooth && !isBluetoothEnabled) {
+                enableBluetoothLauncher.launch(
+                    Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+                )
+            }
+        }
+
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.S) {
+            permissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.BLUETOOTH_SCAN,
+                    Manifest.permission.BLUETOOTH_CONNECT,
+                )
+            )
+        }
+
         setContent {
             FCPPushNotificationsHTTPV1Theme {
+
                 Surface(
                     color = MaterialTheme.colorScheme.background,
                     modifier = Modifier.fillMaxSize()
@@ -69,6 +116,9 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(route = Screen.WifiP2pConnectionScreen.route) {
                             WifiP2pConnectionScreen()
+                        }
+                        composable(route = Screen.BluetoothChatScreen.route) {
+                            BluetoothChatScreen()
                         }
                         composable(route = Screen.PrivateNotesScreen.route) {
                             NotesScreen(navController)

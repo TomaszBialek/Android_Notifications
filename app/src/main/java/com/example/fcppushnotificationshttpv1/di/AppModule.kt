@@ -1,7 +1,10 @@
 package com.example.fcppushnotificationshttpv1.di
 
 import android.app.Application
+import android.content.Context
 import androidx.room.Room
+import com.example.fcppushnotificationshttpv1.bluetooth.data.chat.AndroidBluetoothController
+import com.example.fcppushnotificationshttpv1.bluetooth.domain.chat.BluetoothController
 import com.example.fcppushnotificationshttpv1.private_notes.data.data_source.NoteDatabase
 import com.example.fcppushnotificationshttpv1.private_notes.data.repository.NoteRepositoryImpl
 import com.example.fcppushnotificationshttpv1.private_notes.domain.repository.NoteRepository
@@ -13,6 +16,7 @@ import com.example.fcppushnotificationshttpv1.private_notes.domain.use_case.Note
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -45,5 +49,11 @@ object AppModule {
             addNote = AddNoteUseCase(repository),
             getNote = GetNoteUseCase(repository)
         )
+    }
+
+    @Provides
+    @Singleton
+    fun provideBluetoothController(@ApplicationContext context: Context): BluetoothController {
+        return AndroidBluetoothController(context)
     }
 }

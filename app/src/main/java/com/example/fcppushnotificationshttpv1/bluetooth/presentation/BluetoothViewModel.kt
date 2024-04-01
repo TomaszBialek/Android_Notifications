@@ -26,7 +26,7 @@ class BluetoothViewModel @Inject constructor(
             scannedDevice = scannedDevices,
             pairedDevice = pairedDevices
         )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), _state)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), _state.value)
 
     fun startScan() {
         bluetoothController.startDiscovery()
