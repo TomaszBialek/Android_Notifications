@@ -6,11 +6,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
-import com.example.fcppushnotificationshttpv1.main.domain.Destination
+import com.example.fcppushnotificationshttpv1.core.Screen
 
 @Composable
 fun DestinationLazyColumn(
-    destinations: List<Destination>,
+    destinations: List<Screen>,
     navController: NavController,
     modifier: Modifier = Modifier
 ) {

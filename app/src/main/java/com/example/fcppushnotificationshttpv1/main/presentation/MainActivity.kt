@@ -20,14 +20,21 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.splashscreen.SplashScreenViewProvider
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.example.fcppushnotificationshttpv1.core.Screen
 import com.example.fcppushnotificationshttpv1.main.domain.MainViewModel
 import com.example.fcppushnotificationshttpv1.notification.chat.presentation.NotificationChatScreen
+import com.example.fcppushnotificationshttpv1.private_notes.presentation.add_edit_note.components.AddEditNoteScreen
+import com.example.fcppushnotificationshttpv1.private_notes.presentation.notes.components.NotesScreen
 import com.example.fcppushnotificationshttpv1.ui.theme.FCPPushNotificationsHTTPV1Theme
 import com.example.fcppushnotificationshttpv1.wifip2p.chat.presentation.WifiP2pConnectionScreen
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private val mainViewModel by viewModels<MainViewModel>()
@@ -53,18 +60,35 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize()
                 ) {
                     val navController = rememberNavController()
-                    NavHost(navController = navController, startDestination = "MainScreen") {
-                        composable(route = "MainScreen") {
+                    NavHost(navController = navController, startDestination = Screen.MainScreen.route) {
+                        composable(route = Screen.MainScreen.route) {
                             MainScreen(navController = navController)
                         }
-                        composable(route = "NotificationChatScreen") {
+                        composable(route = Screen.NotificationChatScreen.route) {
                             NotificationChatScreen()
                         }
-                        composable(route = "WifiP2pConnectionScreen") {
+                        composable(route = Screen.WifiP2pConnectionScreen.route) {
                             WifiP2pConnectionScreen()
                         }
-                        composable(route ="PrivateNotesScreen") {
-
+                        composable(route = Screen.PrivateNotesScreen.route) {
+                            NotesScreen(navController)
+                        }
+                        composable(
+                            route = Screen.AddEditPrivateNoteScreen.route +
+                                    "?noteId={noteId}&noteColor={noteColor}",
+                            arguments = listOf(
+                                navArgument(name = "noteId") {
+                                    type = NavType.IntType
+                                    defaultValue = -1
+                                },
+                                navArgument(name = "noteColor") {
+                                    type = NavType.IntType
+                                    defaultValue = -1
+                                }
+                            )
+                        ) {
+                            val color = it.arguments?.getInt("noteColor") ?: -1
+                            AddEditNoteScreen(navController = navController, noteColor = color)
                         }
                     }
                 }

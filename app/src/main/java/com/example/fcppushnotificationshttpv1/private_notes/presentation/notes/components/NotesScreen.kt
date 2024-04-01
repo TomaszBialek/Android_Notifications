@@ -37,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.fcppushnotificationshttpv1.core.Screen
 import com.example.fcppushnotificationshttpv1.private_notes.presentation.notes.NotesEvent
 import com.example.fcppushnotificationshttpv1.private_notes.presentation.notes.NotesViewModel
 import kotlinx.coroutines.launch
@@ -54,7 +55,7 @@ fun NotesScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-
+                    navController.navigate(Screen.AddEditPrivateNoteScreen.route)
                 },
                 containerColor = MaterialTheme.colorScheme.primary
             ) {
@@ -109,7 +110,10 @@ fun NotesScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
-
+                                navController.navigate(
+                                    Screen.AddEditPrivateNoteScreen.route +
+                                            "?noteId=${note.id}&noteColor=${note.color}"
+                                )
                             },
                         onDeleteClick = {
                             viewModel.onEvent(NotesEvent.DeleteNote(note))

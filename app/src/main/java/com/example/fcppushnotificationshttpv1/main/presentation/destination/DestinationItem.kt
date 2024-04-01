@@ -14,11 +14,11 @@ import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.fcppushnotificationshttpv1.main.domain.Destination
+import com.example.fcppushnotificationshttpv1.core.Screen
 
 @Composable
 fun DestinationItem(
-    destination: Destination,
+    destination: Screen,
     navController: NavController,
     modifier: Modifier = Modifier
 ) {
