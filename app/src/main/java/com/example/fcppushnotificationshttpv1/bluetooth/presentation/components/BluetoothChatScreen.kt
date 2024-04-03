@@ -2,7 +2,6 @@ package com.example.fcppushnotificationshttpv1.bluetooth.presentation.components
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
@@ -31,7 +30,7 @@ fun BluetoothChatScreen(
             Toast.makeText(context, message, Toast.LENGTH_LONG).show()
         }
     }
-    
+
     LaunchedEffect(key1 = state.isConnected) {
         if (state.isConnected) {
             Toast.makeText(context, "You're connected!", Toast.LENGTH_LONG).show()
@@ -52,7 +51,13 @@ fun BluetoothChatScreen(
                     Text(text = "Connecting...")
                 }
             }
-
+            state.isConnected -> {
+                ChatScreen(
+                    state = state,
+                    onDisconnect = viewModel::disconnectFromDevice,
+                    onSendMessage = viewModel::sendMessage
+                )
+            }
             else -> {
                 DeviceScreen(
                     state = state,
