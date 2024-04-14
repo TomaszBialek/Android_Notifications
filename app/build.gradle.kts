@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
-//    alias(libs.plugins.com.google.gms.google.services)
+    alias(libs.plugins.com.google.gms.google.services)
     alias(libs.plugins.serializationKotlinAndroid)
     alias(libs.plugins.com.google.dagger.hilt.android)
     alias(libs.plugins.com.google.devtools.ksp)
