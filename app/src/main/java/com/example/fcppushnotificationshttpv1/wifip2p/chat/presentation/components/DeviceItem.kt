@@ -1,6 +1,5 @@
-package com.example.fcppushnotificationshttpv1.wifip2p.chat.presentation.device
+package com.example.fcppushnotificationshttpv1.wifip2p.chat.presentation.components
 
-import android.net.wifi.p2p.WifiP2pDevice
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,12 +16,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.fcppushnotificationshttpv1.R
+import com.example.fcppushnotificationshttpv1.wifip2p.chat.domain.ComposeWifiP2pDevice
 
 @Composable
 fun DeviceItem(
-    item: WifiP2pDevice,
-    onConnectItemClickListener: (WifiP2pDevice) -> Unit,
-    onDisconnectItemClickListener: (WifiP2pDevice) -> Unit,
+    item: ComposeWifiP2pDevice,
+    onConnectItemClickListener: (ComposeWifiP2pDevice) -> Unit,
+    onDisconnectItemClickListener: () -> Unit,
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth()
@@ -44,7 +44,7 @@ fun DeviceItem(
                     Text(text = "Connect")
                 }
                 Button(onClick = {
-                    onDisconnectItemClickListener(item)
+                    onDisconnectItemClickListener()
                 }) {
                     Text(text = "Disconnect")
                 }
@@ -61,13 +61,13 @@ fun DeviceItem(
 @Preview
 @Composable
 fun DeviceItemPreview() {
-    DeviceItem(item = WifiP2pDevice().apply {
-        this.deviceAddress = "address"
-        this.deviceName = "name"
-        this.primaryDeviceType = "primaryType"
-        this.secondaryDeviceType = "secondaryType"
-        this.status = WifiP2pDevice.AVAILABLE
-    }, {
+    DeviceItem(item = ComposeWifiP2pDevice(
+        "address",
+        "name",
+        "primaryType",
+        "secondaryType",
+        ComposeWifiP2pDevice.STATUS.AVAILABLE
+    ), {
 
     }, {
 
@@ -75,15 +75,15 @@ fun DeviceItemPreview() {
 }
 
 @Composable
-private fun DeviceDeviceStatus(device: WifiP2pDevice) {
+private fun DeviceDeviceStatus(device: ComposeWifiP2pDevice) {
     Text(
-        text = when (device.status) {
-            WifiP2pDevice.AVAILABLE -> stringResource(id = R.string.device_status_available)
-            WifiP2pDevice.INVITED -> stringResource(id = R.string.device_status_invited)
-            WifiP2pDevice.CONNECTED -> stringResource(id = R.string.device_status_connected)
-            WifiP2pDevice.FAILED -> stringResource(id = R.string.device_status_failed)
-            WifiP2pDevice.UNAVAILABLE -> stringResource(id = R.string.device_status_unavailable)
-            else -> stringResource(id = R.string.device_status_unknown)
+        text = when (device.deviceStatus) {
+            ComposeWifiP2pDevice.STATUS.AVAILABLE -> stringResource(id = R.string.device_status_available)
+            ComposeWifiP2pDevice.STATUS.INVITED -> stringResource(id = R.string.device_status_invited)
+            ComposeWifiP2pDevice.STATUS.CONNECTED -> stringResource(id = R.string.device_status_connected)
+            ComposeWifiP2pDevice.STATUS.FAILED -> stringResource(id = R.string.device_status_failed)
+            ComposeWifiP2pDevice.STATUS.UNAVAILABLE -> stringResource(id = R.string.device_status_unavailable)
+            ComposeWifiP2pDevice.STATUS.UNKNOWN -> stringResource(id = R.string.device_status_unknown)
         }
     )
 }

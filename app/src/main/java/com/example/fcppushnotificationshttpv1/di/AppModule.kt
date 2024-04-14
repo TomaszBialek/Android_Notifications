@@ -13,6 +13,7 @@ import com.example.fcppushnotificationshttpv1.private_notes.domain.use_case.Dele
 import com.example.fcppushnotificationshttpv1.private_notes.domain.use_case.GetNoteUseCase
 import com.example.fcppushnotificationshttpv1.private_notes.domain.use_case.GetNotesUseCase
 import com.example.fcppushnotificationshttpv1.private_notes.domain.use_case.NoteUseCases
+import com.example.fcppushnotificationshttpv1.wifip2p.chat.data.AndroidWifiP2pController
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -55,5 +56,11 @@ object AppModule {
     @Singleton
     fun provideBluetoothController(@ApplicationContext context: Context): BluetoothController {
         return AndroidBluetoothController(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideWifiP2pController(@ApplicationContext context: Context): AndroidWifiP2pController {
+        return AndroidWifiP2pController(context)
     }
 }

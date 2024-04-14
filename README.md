@@ -18,6 +18,8 @@ Project is created with:
 * Dependency Injection (Hilt)
 * Room
 
+with the Clean Architecture approach
+
 ## Features
 * Communication via notifications (with usage of FCM and the external server - also included in my repo)
 * Communication via WiFi Direct (P2P)

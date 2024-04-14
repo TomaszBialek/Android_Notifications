@@ -18,7 +18,6 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.core.animation.doOnEnd
 import androidx.core.app.ActivityCompat
@@ -37,7 +36,7 @@ import com.example.fcppushnotificationshttpv1.notification.chat.presentation.Not
 import com.example.fcppushnotificationshttpv1.private_notes.presentation.add_edit_note.components.AddEditNoteScreen
 import com.example.fcppushnotificationshttpv1.private_notes.presentation.notes.components.NotesScreen
 import com.example.fcppushnotificationshttpv1.ui.theme.FCPPushNotificationsHTTPV1Theme
-import com.example.fcppushnotificationshttpv1.wifip2p.chat.presentation.WifiP2pConnectionScreen
+import com.example.fcppushnotificationshttpv1.wifip2p.chat.presentation.components.WifiP2pConnectionScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
