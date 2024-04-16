@@ -110,4 +110,8 @@ dependencies {
     // To use Kotlin annotation processing tool (ksp)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
+
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.coil.compose)
+    implementation(libs.androidx.runtime.livedata)
 }

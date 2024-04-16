@@ -13,4 +13,5 @@ sealed class Screen(
     data object BluetoothChatScreen: Screen("bluetooth", "BluetoothChatScreen", true)
     data object PrivateNotesScreen: Screen("private notes", "PrivateNotesScreen", true)
     data object AddEditPrivateNoteScreen: Screen("add/edit note","AddEditNoteScreen", true)
+    data object CompressingPhotoScreen: Screen("Compress a photo", "CompressPhotoScreen", true)
 }
