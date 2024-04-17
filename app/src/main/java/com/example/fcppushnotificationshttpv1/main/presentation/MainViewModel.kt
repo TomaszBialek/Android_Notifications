@@ -1,4 +1,4 @@
-package com.example.fcppushnotificationshttpv1.main.domain
+package com.example.fcppushnotificationshttpv1.main.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,7 +14,8 @@ class MainViewModel : ViewModel() {
         Screen.NotificationChatScreen,
         Screen.WifiP2pConnectionScreen,
         Screen.BluetoothChatScreen,
-        Screen.PrivateNotesScreen
+        Screen.PrivateNotesScreen,
+        Screen.RunningScreen
     )
 
     private val _isReady = MutableStateFlow(false)

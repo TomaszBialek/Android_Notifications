@@ -1,4 +1,4 @@
-package com.example.fcppushnotificationshttpv1.main.presentation
+package com.example.fcppushnotificationshttpv1.main.presentation.compontents
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -6,8 +6,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.fcppushnotificationshttpv1.main.domain.MainViewModel
-import com.example.fcppushnotificationshttpv1.main.presentation.destination.DestinationLazyColumn
+import com.example.fcppushnotificationshttpv1.main.presentation.MainViewModel
 
 @Composable
 fun MainScreen(

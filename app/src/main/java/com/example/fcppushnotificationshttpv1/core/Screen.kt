@@ -14,4 +14,5 @@ sealed class Screen(
     data object PrivateNotesScreen: Screen("private notes", "PrivateNotesScreen", true)
     data object AddEditPrivateNoteScreen: Screen("add/edit note","AddEditNoteScreen", true)
     data object CompressingPhotoScreen: Screen("Compress a photo", "CompressPhotoScreen", true)
+    data object RunningScreen: Screen("Foreground Service", "RunningScreen", true)
 }

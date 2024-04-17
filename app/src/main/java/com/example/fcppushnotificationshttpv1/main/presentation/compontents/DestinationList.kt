@@ -1,4 +1,4 @@
-package com.example.fcppushnotificationshttpv1.main.presentation.destination
+package com.example.fcppushnotificationshttpv1.main.presentation.compontents
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn

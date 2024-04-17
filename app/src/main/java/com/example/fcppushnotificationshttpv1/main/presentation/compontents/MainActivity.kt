@@ -1,4 +1,4 @@
-package com.example.fcppushnotificationshttpv1.main.presentation
+package com.example.fcppushnotificationshttpv1.main.presentation.compontents
 
 import android.Manifest
 import android.animation.ObjectAnimator
@@ -35,11 +35,12 @@ import androidx.navigation.navArgument
 import androidx.work.WorkManager
 import com.example.fcppushnotificationshttpv1.bluetooth.presentation.components.BluetoothChatScreen
 import com.example.fcppushnotificationshttpv1.core.Screen
-import com.example.fcppushnotificationshttpv1.main.domain.MainViewModel
+import com.example.fcppushnotificationshttpv1.main.presentation.MainViewModel
 import com.example.fcppushnotificationshttpv1.notification.chat.presentation.NotificationChatScreen
 import com.example.fcppushnotificationshttpv1.photo_compression.presentation.components.PhotoCompressionScreen
 import com.example.fcppushnotificationshttpv1.private_notes.presentation.add_edit_note.components.AddEditNoteScreen
 import com.example.fcppushnotificationshttpv1.private_notes.presentation.notes.components.NotesScreen
+import com.example.fcppushnotificationshttpv1.running.RunningScreen
 import com.example.fcppushnotificationshttpv1.ui.theme.FCPPushNotificationsHTTPV1Theme
 import com.example.fcppushnotificationshttpv1.wifip2p.chat.presentation.components.WifiP2pConnectionScreen
 import dagger.hilt.android.AndroidEntryPoint
@@ -172,6 +173,9 @@ class MainActivity : ComponentActivity() {
                             val uri = backStackEntry.arguments?.getString("uri") ?: ""
                             val decoded = URLDecoder.decode(uri, "UTF-8")
                             PhotoCompressionScreen(decoded, workManager)
+                        }
+                        composable(route = Screen.RunningScreen.route) {
+                            RunningScreen()
                         }
                     }
                 }
